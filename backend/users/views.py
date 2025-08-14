@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.utils.html import strip_tags
+from django.http import JsonResponse     
 
 from .models import Property, SavedProperty, MeetingRequest, Notification, CustomUser, EventPlace, EventBooking
 from .serializers import (
@@ -45,7 +46,8 @@ def get_tokens(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
-
+def home(request):
+    return JsonResponse({"status": "ok", "message": "API is running"})
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
