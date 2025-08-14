@@ -485,22 +485,25 @@ TEMPLATES = [
 # -------------------------
 # DATABASE
 # -------------------------
-DATABASE_URL = os.getenv("DATABASE_URL")
-if DATABASE_URL:
+if 'DATABASE_URL' in os.environ:
+    # On Render, use the DATABASE_URL environment variable.
+    # The `conn_max_age` is a good practice for pooled connections.
     DATABASES = {
         'default': dj_database_url.config(
-            default=DATABASE_URL,
+            default=os.environ.get('DATABASE_URL'),
             conn_max_age=600,
+            conn_health_checks=True,
             ssl_require=True
         )
     }
 else:
+    # Fallback to local settings from a .env file.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
+            'NAME': config('DB_NAME', default='mydatabase'),
+            'USER': config('DB_USER', default='myuser'),
+            'PASSWORD': config('DB_PASSWORD', default='mypassword'),
             'HOST': config('DB_HOST', default='localhost'),
             'PORT': config('DB_PORT', default='5432'),
         }
